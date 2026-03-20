@@ -1,0 +1,85 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: #ffffff;
+  margin: 0;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+}
+
+/* HEADINGS */
+h1 {
+  text-align: center;
+  color: #3b82f6;
+}
+
+h2 {
+  color: #3b82f6;
+}
+
+/* CARDS */
+.card {
+  background: #1e293b;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 12px;
+}
+
+.center {
+  text-align: center;
+}
+
+/* BUTTON */
+button {
+  padding: 10px 20px;
+  background: #f97316;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+button:hover {
+  background: #ea580c;
+}
+
+/* SCORE */
+.score {
+  font-size: 60px;
+  font-weight: bold;
+  color: #f97316;
+  text-shadow: 0 0 12px rgba(249, 115, 22, 0.5);
+}
+
+/* METRICS */
+.metric {
+  margin: 12px 0;
+}
+
+.metric strong {
+  color: #22d3ee;
+}
+
+.bar {
+  height: 12px;
+  background: #334155;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 12px;
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+}
+
+/* VIDEO */
+video {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+}

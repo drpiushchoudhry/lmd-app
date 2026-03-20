@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>LMD Surgical Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <h1>LMD Surgical Performance Analyzer</h1>
+
+  <!-- Upload -->
+  <div class="card">
+    <h2>Upload Laparoscopic Cholecystectomy Case</h2>
+    <input type="file" id="videoFile" accept="video/*">
+    <button onclick="upload()">Analyze</button>
+  </div>
+
+  <!-- Video Preview -->
+  <div class="card" id="videoCard" style="display:none;">
+    <h2>Video Preview</h2>
+    <video id="videoPreview" controls></video>
+  </div>
+
+  <!-- Score -->
+  <div class="card center" id="scoreCard" style="display:none;">
+    <h2>LMD Score</h2>
+    <div id="score" class="score">0</div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="card" id="metricsCard" style="display:none;">
+    <h2>Performance Metrics</h2>
+    <div id="metrics"></div>
+  </div>
+
+  <!-- ERIF -->
+  <div class="card" id="erifCard" style="display:none;">
+    <h2>ERIF Mapping</h2>
+    <ul id="erif"></ul>
+  </div>
+
+  <!-- Phases -->
+  <div class="card" id="phaseCard" style="display:none;">
+    <h2>Procedure Phases (Laparoscopic Cholecystectomy)</h2>
+    <div id="phases"></div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
