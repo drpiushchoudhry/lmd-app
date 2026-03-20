@@ -7,4 +7,8 @@ app = FastAPI()
 def home():
     return {"message": "LMD backend is LIVE 🚀"}
 
+@app.get("/test")
+def test():
+    return {"status": "ok"}
+
 handler = Mangum(app)
