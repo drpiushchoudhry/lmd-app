@@ -1,98 +1,76 @@
-async function upload() {
-  const file = document.getElementById("videoFile").files[0];
+const uploadInput = document.getElementById("fileInput");
+const uploadBtn = document.getElementById("uploadBtn");
+const scoreBox = document.getElementById("score");
+const metricsDiv = document.getElementById("metrics");
 
-  if (!file) {
-    alert("Please select a video file");
-    return;
-  }
+const API_URL = "https://lmd-backend-qvsq.onrender.com/upload/";
 
-  // Show video preview
-  const video = document.getElementById("videoPreview");
-  video.src = URL.createObjectURL(file);
-  document.getElementById("videoCard").style.display = "block";
+uploadBtn.addEventListener("click", async () => {
+    const file = uploadInput.files[0];
 
-  // Show loading
-  document.getElementById("scoreCard").style.display = "block";
-  document.getElementById("score").innerText = "Processing...";
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  try {
-    const res = await fetch("http://localhost:8000/upload/", {
-      method: "POST",
-      body: formData
-    });
-
-    if (!res.ok) {
-      throw new Error("Server error");
+    if (!file) {
+        alert("Please select a video");
+        return;
     }
 
-    const data = await res.json();
+    // UX STATES
+    scoreBox.innerHTML = `<div class="loader"></div> Uploading video...`;
 
-    displayResults(data.result);
+    setTimeout(() => {
+        scoreBox.innerHTML = `<div class="loader"></div> AI analyzing motion...`;
+    }, 2000);
 
-  } catch (err) {
-    alert("Error connecting to backend. Make sure server is running.");
-    console.error(err);
-  }
-}
+    setTimeout(() => {
+        scoreBox.innerHTML = `<div class="loader"></div> Computing metrics...`;
+    }, 5000);
 
-function displayResults(result) {
+    const formData = new FormData();
+    formData.append("file", file);
 
-  document.getElementById("metricsCard").style.display = "block";
-  document.getElementById("erifCard").style.display = "block";
-  document.getElementById("phaseCard").style.display = "block";
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Authorization": "Basic " + btoa("admin:lmd123")
+            },
+            body: formData
+        });
 
-  // Score
-  document.getElementById("score").innerText = result.score;
+        const data = await response.json();
 
-  // Metrics
-  const metricsDiv = document.getElementById("metrics");
-  metricsDiv.innerHTML = "";
+        const metrics = data.result.metrics;
+        const score = data.result.score;
 
-  for (let key in result.metrics) {
-    const value = result.metrics[key];
+        // FINAL SCORE
+        scoreBox.innerHTML = `LMD Score: ${score}`;
 
-    metricsDiv.innerHTML += `
-      <div class="metric">
-        <strong>${formatKey(key)}</strong>: ${value.toFixed(2)}
-        <div class="bar">
-          <div class="fill" style="width:${value * 10}%"></div>
-        </div>
-      </div>
-    `;
-  }
+        metricsDiv.innerHTML = "";
 
-  // ✅ ERIF Mapping (FIXED)
-  document.getElementById("erif").innerHTML = `
-    <li>Smoothness &rarr; ERDI</li>
-    <li>Hesitation &rarr; ERDI + RECS</li>
-    <li>Flow Efficiency &rarr; PRISM</li>
-    <li>Movement Economy &rarr; PRISM</li>
-    <li>Technical Events &rarr; RECS</li>
-    <li>Step Transitions &rarr; VERA</li>
-    <li>Consistency &rarr; DEERS</li>
-    <li>Safety Pattern &rarr; BERNI</li>
-    <li>Active Time &rarr; PRISM</li>
-    <li>Integration &rarr; HERMES</li>
-  `;
+        for (let key in metrics) {
+            let value = metrics[key];
 
-  // ✅ Procedure Phases (FIXED)
-  document.getElementById("phases").innerHTML = `
-    Port Placement &rarr; 8.5<br>
-    Exposure &rarr; 8.2<br>
-    Calot's Triangle Dissection &rarr; 7.8<br>
-    Critical View of Safety &rarr; 8.4<br>
-    Clipping and Division &rarr; 8.9<br>
-    Gallbladder Separation &rarr; 7.6<br>
-    Specimen Extraction &rarr; 8.1
-  `;
-}
+            // Normalize (0–10)
+            let ratio = value / 10;
 
-// Format metric keys nicely
-function formatKey(key) {
-  return key
-    .replace("_", " ")
-    .replace(/\b\w/g, l => l.toUpperCase());
-}
+            // Blue → Orange gradient
+            let r = Math.floor(59 + ratio * (249 - 59));
+            let g = Math.floor(130 + ratio * (115 - 130));
+            let b = Math.floor(246 - ratio * (246 - 22));
+
+            let color = `rgb(${r}, ${g}, ${b})`;
+
+            metricsDiv.innerHTML += `
+                <div class="metric">
+                    <div>${key}: ${value.toFixed(2)}</div>
+                    <div class="bar">
+                        <div class="fill" style="width:${value * 10}%; background:${color}"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+    } catch (err) {
+        console.error(err);
+        scoreBox.innerHTML = "Error processing video";
+    }
+});
