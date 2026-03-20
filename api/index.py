@@ -5,8 +5,8 @@ import secrets
 app = FastAPI()
 security = HTTPBasic()
 
-USERNAME = "admin"
-PASSWORD = "1234"
+USERNAME = "applmd"
+PASSWORD = "13579"
 
 def authenticate(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, USERNAME)
