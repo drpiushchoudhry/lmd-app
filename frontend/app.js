@@ -23,10 +23,17 @@ uploadBtn.addEventListener("click", async () => {
 
         const data = await response.json();
 
-        scoreDiv.innerHTML = "Result: " + JSON.stringify(data);
+        if (data.status === "error") {
+            scoreDiv.innerHTML = "❌ " + data.message;
+        } else {
+            scoreDiv.innerHTML =
+                "✅ Frames: " + data.frames +
+                "<br>FPS: " + data.fps +
+                "<br>Read Test: " + data.sample_frames_read + " frames";
+        }
 
     } catch (error) {
         console.error(error);
-        scoreDiv.innerHTML = "Error analyzing video";
+        scoreDiv.innerHTML = "❌ Server error";
     }
 });
