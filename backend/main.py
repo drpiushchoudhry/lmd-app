@@ -1,70 +1,35 @@
-# Copyright © 2017–2025 Dr. Piush Choudhry / Layveer Medical Division
-# All Rights Reserved
-
-from fastapi import FastAPI, Form
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, UploadFile, File
+import shutil
+import os
+import cv2
 
 app = FastAPI()
 
-# Simple login page
-@app.get("/", response_class=HTMLResponse)
-def login_page():
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>LMD Login</title>
-        <style>
-            body {
-                font-family: Arial;
-                background: #0f172a;
-                color: white;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
-            .box {
-                background: #1e293b;
-                padding: 30px;
-                border-radius: 10px;
-                text-align: center;
-                width: 300px;
-            }
-            input {
-                width: 90%;
-                padding: 10px;
-                margin: 10px;
-                border-radius: 5px;
-                border: none;
-            }
-            button {
-                padding: 10px 20px;
-                background: #3b82f6;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="box">
-            <h2>LMD Secure Login</h2>
-            <form action="/login" method="post">
-                <input name="username" placeholder="Username" required><br>
-                <input name="password" type="password" placeholder="Password" required><br>
-                <button type="submit">Login</button>
-            </form>
-        </div>
-    </body>
-    </html>
-    """
+@app.get("/")
+def home():
+    return {"message": "Backend is running"}
 
-# Login check
-@app.post("/login", response_class=HTMLResponse)
-def login(username: str = Form(...), password: str = Form(...)):
-    if username == "admin" and password == "1234":
-        return "<h2 style='color:green;text-align:center'>Login Successful ✅</h2>"
-    else:
-        return "<h2 style='color:red;text-align:center'>Invalid Credentials ❌</h2>"
+@app.post("/analyze")
+async def analyze(file: UploadFile = File(...)):
+    try:
+        os.makedirs("uploads", exist_ok=True)
+        file_path = f"uploads/{file.filename}"
+
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        cap = cv2.VideoCapture(file_path)
+
+        if not cap.isOpened():
+            return {"error": "Video cannot be opened"}
+
+        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        cap.release()
+
+        return {
+            "status": "success",
+            "frames": frame_count
+        }
+
+    except Exception as e:
+        return {"error": str(e)}
