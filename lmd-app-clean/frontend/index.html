@@ -13,7 +13,7 @@
   <script>
     async function checkBackend() {
       try {
-        const res = await fetch("https://YOUR-RENDER-URL/test");
+        const res = await fetch("https://lmd-backend-piush.onrender.com/test");
         const data = await res.json();
         document.getElementById("result").innerText = JSON.stringify(data);
       } catch (err) {
