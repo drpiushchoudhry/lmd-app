@@ -6,7 +6,7 @@ uploadBtn.addEventListener("click", async () => {
     const file = fileInput.files[0];
 
     if (!file) {
-        alert("Please select a video first");
+        alert("Please select a video");
         return;
     }
 
@@ -16,7 +16,7 @@ uploadBtn.addEventListener("click", async () => {
     formData.append("file", file);
 
     try {
-        const response = await fetch("https://lmd-backend-piush.onrender.com/analyze", {
+        const response = await fetch("http://127.0.0.1:8000/analyze", {
             method: "POST",
             body: formData
         });
@@ -29,11 +29,10 @@ uploadBtn.addEventListener("click", async () => {
             scoreDiv.innerHTML =
                 "✅ Frames: " + data.frames +
                 "<br>FPS: " + data.fps +
-                "<br>Read Test: " + data.sample_frames_read + " frames";
+                "<br>Test frames: " + data.sample_frames;
         }
 
-    } catch (error) {
-        console.error(error);
-        scoreDiv.innerHTML = "❌ Server error";
+    } catch (err) {
+        scoreDiv.innerHTML = "❌ Backend not running";
     }
 });
